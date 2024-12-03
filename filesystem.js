@@ -42,3 +42,45 @@ class ObjectJSON {
 		this._data[index] = newValue;
 	}
 }
+
+class ObjectDate extends ObjectJSON {
+	sort(field, order = true, byDate) {
+		if (!(byDate === null)) return super.sort(field, order);
+
+		this._data.sort((a, b) => {
+			const timeA = new Date(a[field]);
+			const timeB = new Date(b[field]);
+
+			const [dayA, monthA, yearA] = [
+				timeA.getDay(),
+				timeA.getMonth(),
+				timeA.getFullYear(),
+			];
+
+			const [dayB, monthB, yearB] = [
+				timeB.getDay(),
+				timeB.getMonth(),
+				timeB.getFullYear(),
+			];
+
+			switch (byDate) {
+				case 1:
+					return dayA - dayB;
+				case 0:
+					return monthA - monthB;
+				case -1:
+					return yearA - yearB;
+			}
+		});
+
+		return order ? this._data : this._data.reverse();
+	}
+
+	date(date) {
+		let time = date ? new Date(date) : new Date();
+		return new Promise((resolve, reject) => {
+			resolve(super.search("Date", time.toISOString().split("T")[0]));
+			reject();
+		});
+	}
+}
