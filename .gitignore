@@ -1,0 +1,10 @@
+/node_modules
+*.js
+*.json
+*.txt
+test.yml
+npmrc
+
+
+
+
