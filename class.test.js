@@ -6,9 +6,9 @@ const random = new Random();
 describe("FileJSON", () => {
 	const dataCor = [
 		{
-			Name: "Ключковская Снежана Андреевна",
-			Date: "31.12.1976",
-			ID: 1,
+			Name: "TEST",
+			Date: "TEST",
+			ID: 0,
 		},
 		{
 			Name: "Евсеева Людмила Геннадьевна",
@@ -19,11 +19,6 @@ describe("FileJSON", () => {
 			Name: "Егорова Светлана Михайловна",
 			Date: "05.04.1987",
 			ID: 5,
-		},
-		{
-			Name: "Вахрамеев Вахтанг Николаевич",
-			Date: "22.09.1990",
-			ID: 7,
 		},
 	];
 
