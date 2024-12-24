@@ -1,126 +1,245 @@
+/**
+ * @module Module
+ * @description Базовый модули, расширяющий фунциональность базового JS
+ */
+
+/**
+ * Класс, вызывающий произвольные и случайные структуры данных
+ * @class
+ */
 class Random {
-    #object = null;
+	#object = null;
 
-    string(string, length) {
-        const str = string == undefined ? "abcdefghijklmnopqrstuvwxyz" : string;
+	/**
+	 * Генерирует случайную строку из указанного набора символов.
+	 * @param {string} [charset="abcdefghijklmnopqrstuvwxyz"] - Набор символов для генерации.
+	 * @param {number} length - Длина генерируемой строки.
+	 * @returns {string} Случайная строка указанной длины.
+	 *
+	 * @throws {Error} Если length не указан или меньше 1.
+	 * @throws {TypeError} Если charset не является строкой.
+	 */
+	string(charset = "abcdefghijklmnopqrstuvwxyz", length) {
+		if (typeof length !== "number" || length < 1)
+			throw new Error("Параметр length должен быть числом больше 0");
 
-        return [...Array(length)]
-            .map(() => str[this.number(str.length)])
-            .join("");
-    }
+		if (typeof charset !== "string")
+			throw new TypeError("Параметр charset должен быть строкой");
 
-    number(number = 100) {
-        if (!number instanceof String) return new Error(`this is not a number`);
-        return ~~(Math.random() * number);
-    }
+		return [...Array(length)]
+			.map(() => charset[this.number(charset.length)])
+			.join("");
+	}
 
-    substring(string) {
-        if (!string instanceof String) return new Error(`this is not a string`);
+	/**
+	 * Генерирует случайного числа из указанного.
+	 * @param {number} [number=100] - Число генерируемой от 0 до number.
+	 * @returns {number} Случайное число.
+	 *
+	 * @throws {TypeError} Заданное значение не является числом.
+	 */
+	number(number = 100) {
+		if (typeof number !== "number")
+			return new TypeError(`Параметр number должен быть числом`);
 
-        let [a, b] = [this.number(string.length), this.number(string.length)];
+		return ~~(Math.random() * number);
+	}
 
-        [a, b] = [Math.min(a, b), Math.max(a, b)];
+	/**
+	 * Генерирует случайную подстроку из указанного.
+	 * @param {string} [string="Hello, world"] - Строка, из которой необходимо получить подстроку
+	 * @returns {string} Случайная подстрока из заданной строки
+	 *
+	 * @throws {TypeError} Если string не является строкой.
+	 */
+	substring(string = "Hello, world") {
+		if (typeof string !== "string")
+			return new TypeError(`Параметр string должен быть строкой`);
 
-        return string.slice(1, 3);
-    }
+		let [a, b] = [this.number(string.length), this.number(string.length)];
 
-    boolean() {
-        return Boolean(~~Math.random());
-    }
+		[a, b] = [Math.min(a, b), Math.max(a, b)];
 
-    field(fields) {
-        if (!fields instanceof Array) return new Error(`this is not a array`);
-        return fields[this.number(fields.length)];
-    }
+		return string.slice(1, 3);
+	}
 
-    id(length = 5, type = "number") {
-        if (type === "string") {
-            const string =
-                "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            return this.string(string, length);
-        }
+	/**
+	 * Случайное логическое значение
+	 * @returns {boolean} true | false.
+	 */
+	boolean() {
+		return Math.random() >= 0.5;
+	}
 
-        if (type === "number") {
-            const number = Math.floor(
-                new Date().getTime() * Math.random()
-            ).toString();
+	/**
+	 * Выбирает случайный элемент из массива.
+	 * @param {Array} fields - Массив значений.
+	 * @returns {*} Случайный элемент массива.
+	 * @throws {TypeError} Если fields не является массивом.
+	 */
 
-            return parseInt(number.slice(0, length));
-        }
-    }
+	field(fields) {
+		if (!Array.isArray(fields))
+			throw new TypeError("Параметр fields должен быть массивом");
 
-    item(data, randomSubstring = false) {
-        const length = data.length,
-            index = this.number(length),
-            item = data[index],
-            keys = Object.keys(item),
-            field = this.field(Object.keys(item)),
-            value =
-                randomSubstring && typeof item[field] === "string"
-                    ? this.substring(item[field])
-                    : item[field];
+		return fields[this.number(fields.length)];
+	}
 
-        this.#object = {
-            index: index,
-            item: item,
-            keys: keys,
-            field: field,
-            value: value,
-        };
+	/**
+	 * Генерирует уникальный идентификатор.
+	 * @param {number} [length=5] - Длина идентификатора.
+	 * @param {string} [type="number"] - Тип идентификатора: "number" или "string".
+	 * @returns {string|number} Случайный идентификатор заданного типа.
+	 * @throws {Error} Если тип идентификатора не поддерживается.
+	 */
+	id(length = 5, type = "number") {
+		if (typeof length !== "number" || length < 1) {
+			throw new Error("Длина должна быть положительным числом");
+		}
 
-        return { field: field, value: value };
-    }
+		if (type === "string") {
+			const charset =
+				"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			return this.string(this.string);
+		}
 
-    shuffle(array) {
-        if (!array instanceof Array) return new Error(`this is not a array`);
-        array.sort(() => Math.random() - 0.5);
-    }
+		if (type === "number") {
+			return parseInt(
+				Array.from({ length }, () =>
+					Math.floor(Math.random() * 10)
+				).join("")
+			);
+		}
 
-    get() {
-        return this.#object;
-    }
+		throw new Error(
+			`Тип "${type}" не поддерживается. Используйте "string" или "number"`
+		);
+	}
+
+	/**
+	 * Выбирает случайный элемент из массива данных и одно из его полей, при необходимости генерирует подстроку.
+	 * @param {Array<Object>} data - Массив объектов.
+	 * @param {boolean} [randomSubstring=false] - Генерировать ли подстроку из значения поля.
+	 * @returns {Object} Содержит выбранное поле и его значение.
+	 * @throws {TypeError} Если data не является массивом.
+	 */
+
+	item(data, randomSubstring = false) {
+		if (!Array.isArray(data) || data.length === 0)
+			throw new TypeError(
+				"Параметр data должен быть непустым массивом объектов"
+			);
+
+		const length = data.length,
+			index = this.number(length),
+			item = data[index],
+			keys = Object.keys(item),
+			field = this.field(Object.keys(item)),
+			value =
+				randomSubstring && typeof item[field] === "string"
+					? this.substring(item[field])
+					: item[field];
+
+		this.#object = {
+			index: index,
+			item: item,
+			keys: keys,
+			field: field,
+			value: value,
+		};
+
+		return { field: field, value: value };
+	}
+
+	/**
+	 * Перемешивает элементы массива случайным образом.
+	 * @param {Array} array - Массив для перемешивания.
+	 * @returns {Array} Новый массив с перемешанными элементами.
+	 * @throws {TypeError} Если переданный аргумент не является массивом.
+	 */
+
+	shuffle(array) {
+		if (!Array.isArray(array))
+			throw new TypeError("Параметр должен быть массивом");
+
+		const result = [...array];
+		for (let i = result.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[result[i], result[j]] = [result[j], result[i]]; // Обмен значениями
+		}
+
+		return result;
+	}
+
+	/**
+	 * @returns {Object|null} Приватный объект или null, если объект не установлен.
+	 */
+	get() {
+		return this.#object;
+	}
 }
+
+/**
+ * Сравнивает два значения по типу и, при необходимости, по значению.
+ * @param {*} a - Первое значение.
+ * @param {*} b - Второе значение.
+ * @param {boolean} [strict=false] - Если true, выполняется строгое сравнение (по типу и значению).
+ * @returns {boolean} true, если значения равны по указанным критериям, иначе false.
+ */
 
 function isEqualByType(a, b, strict = false) {
 	const typeA = typeof a;
 	const typeB = typeof b;
 
-	if (!strict) return typeA === typeB;
-	if (typeA !== "object" && typeB !== "object") return a === b;
+	if (typeA !== typeB) return false;
+	if (!strict) return true;
+	if (typeA !== "object" || a === null || b === null) return a === b;
 
 	const keysA = Object.keys(a);
 	const keysB = Object.keys(b);
 
-	const valuesA = Object.values(a);
-	const valuesB = Object.values(b);
+	if (keysA.length !== keysB.length) return false;
 
-	for (let i in keysA) {
-		if (typeof valuesA[i] !== typeof valuesB[i]) return false;
-		if (valuesA[i] !== valuesB[i] && strict) return false;
-	}
+	return keysA.every((key) => {
+		const valueA = a[key];
+		const valueB = b[key];
 
-	if (
-		keysA.length === keysB.length &&
-		JSON.stringify(keysA) === JSON.stringify(keysB)
-	)
-		return true;
+		return (
+			typeof valueA === typeof valueB &&
+			(typeof valueA === "object"
+				? isEqualByType(valueA, valueB, true)
+				: valueA === valueB)
+		);
+	});
 }
 
-function checkUnique(array, field) {
-	let keys = [];
+/**
+ * Проверяет уникальность значений массива
+ * @param {Array<Object>} array - Массив значение.
+ * @param {string|number} item - Элемент массива значение.
+ * @returns {boolean} true, если все значения уникальны.
+ * @throws {Error} Если найдены дублирующиеся значения.
+ */
 
-	array.forEach((item) => {
-		if (!keys.includes(item[field])) {
-			return keys.push(item[field]);
+function checkUnique(array, field) {
+	if (!Array.isArray(array)) {
+		throw new TypeError("Первый аргумент должен быть массивом");
+	}
+
+	const seen = new Set();
+
+	for (const item of array) {
+		if (seen.has(item[field])) {
+			throw new Error(`Значение ${field}:${item[field]} не уникально`);
 		}
-		throw new Error(`this ${field}:${item[field]} is not unique`);
-	});
+		seen.add(item[field]);
+	}
 
 	return true;
 }
 
 module.exports = {
-    Random: Random,
-    isEqualByType: isEqualByType,
-    checkUnique: checkUnique,
-}
+	Random: Random,
+	isEqualByType: isEqualByType,
+	checkUnique: checkUnique,
+};

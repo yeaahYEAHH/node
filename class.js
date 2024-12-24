@@ -1,12 +1,31 @@
 const fs = require("fs");
 const path = require("path");
 const { Random, isEqualByType } = require("./module.js");
-
 const random = new Random();
 
+/**
+ * @module JSON
+ * @description Модуль, в котором реализуется работы с JSON
+ */
+
+/**
+ * Класс для работы с JSON файлами.
+ * Предоставляет методы для работы с данными внутри JSON-файлом.
+ * @class
+ */
 class FileJSON {
+	/**
+	 * @private
+	 * @type {Object}
+	 */
 	#template;
 
+	/**
+	 * Валидация переданных параметров и наличия загруженных данных.
+	 * @protected
+	 * @param {...*} parametr - Параметры для проверки.
+	 * @throws {Error} Если данные не загружены или параметры не определены.
+	 */
 	_validate(...parametr) {
 		if (!this.data)
 			throw new Error(
@@ -17,16 +36,32 @@ class FileJSON {
 			if (item === undefined) throw new Error(`parametrs is undefind`);
 	}
 
+	/**
+	 * Валидация наличия указанного поля в данных.
+	 * @protected
+	 * @param {string} field - Поле, которое необходимо проверить.
+	 * @throws {Error} Если поле не найдено в данных.
+	 */
 	_validateField(field) {
 		if (!this.data.some((item) => field in item))
 			throw new Error(`field "${field}" is not exist`);
 	}
 
+	/**
+	 * Создает экземпляр FileJSON.
+	 * @param {string} file - Путь к файлу JSON.
+	 * @constructor
+	 */
 	constructor(file) {
 		this.path = file;
 		this.data = null;
 	}
 
+	/**
+	 * Загружает и парсит данные из JSON-файла.
+	 * @returns {Promise<void>}
+	 * @throws {Error} Если файл не найден или не удается распарсить данные.
+	 */
 	async load() {
 		try {
 			await fs.promises.access(this.path, fs.constants.F_OK);
@@ -51,6 +86,11 @@ class FileJSON {
 		}
 	}
 
+	/**
+	 * Записывает данные обратно в JSON-файл.
+	 * @returns {Promise<void>}
+	 * @throws {Error} Если не удается записать данные в файл.
+	 */
 	async write() {
 		try {
 			const data = JSON.stringify(this.data, null, 2);
@@ -70,6 +110,13 @@ class FileJSON {
 
 	// async save() {} для обновления и сохранения файла
 
+	/**
+	 * Ищет элементы в данных по заданному полю и значению.
+	 * @public
+	 * @param {string} field - Поле для поиска.
+	 * @param {string|number} value - Значение для поиска.
+	 * @returns {Array|null} Возвращает массив найденных элементов или null, если ничего не найдено.
+	 */
 	search(field, value) {
 		this._validate(field, value);
 		this._validateField(field);
@@ -87,6 +134,14 @@ class FileJSON {
 		return items;
 	}
 
+	/**
+	 * Сортирует данные по указанному полю и порядку.
+	 * @public
+	 * @param {string} field - Поле для сортировки.
+	 * @param {boolean} [order=true] - Порядок сортировки: true - по возрастанию, false - по убыванию.
+	 * @returns {Array} Отсортированный массив.
+	 * @throws {Error} Если поле не существует.
+	 */
 	sort(field, order = true) {
 		this._validate(field, order);
 		this._validateField(field);
@@ -100,13 +155,21 @@ class FileJSON {
 		return sortedData;
 	}
 
+	/**
+	 * Добавляет новый элемент в данные.
+	 * @public
+	 * @param {Object} add - Новый элемент для добавления.
+	 * @returns {string} Сообщение об успешном добавлении.
+	 * @throws {TypeError} Если тип добавляемого элемента не совпадает с шаблоном.
+	 * @throws {Error} Если структура добавляемого элемента не совпадает с шаблоном.
+	 */
 	add(add) {
 		this._validate(add);
 
 		const typeTemplate = typeof this.#template,
 			typeAdd = typeof add;
 
-		if (!typeAdd === typeTemplate) throw new Error(`type is incorrect`);
+		if (!typeAdd === typeTemplate) throw new TypeError(`type is incorrect`);
 
 		add.ID = random.id();
 
