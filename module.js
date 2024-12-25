@@ -19,7 +19,7 @@ class Random {
 	 * @throws {Error} Если length не указан или меньше 1.
 	 * @throws {TypeError} Если charset не является строкой.
 	 */
-	string(charset = "abcdefghijklmnopqrstuvwxyz", length) {
+	string(charset = "abcdefghijklmnopqrstuvwxyz", length = 5) {
 		if (typeof length !== "number" || length < 1)
 			throw new Error("Параметр length должен быть числом больше 0");
 

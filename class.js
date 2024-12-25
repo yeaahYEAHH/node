@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { Random, isEqualByType } = require("./module.js");
+
 const random = new Random();
 
 /**
@@ -19,6 +20,7 @@ class FileJSON {
 	 * @type {Object}
 	 */
 	#template;
+	#index = {};
 
 	/**
 	 * Валидация переданных параметров и наличия загруженных данных.
@@ -45,6 +47,14 @@ class FileJSON {
 	_validateField(field) {
 		if (!this.data.some((item) => field in item))
 			throw new Error(`field "${field}" is not exist`);
+	}
+
+	_createIndex(field) {
+		this.#index[field] = {};
+		this.data.forEach((item, idx) => {
+			this.#index[field][item[field]] = idx;
+		});
+		console.log(this.#index);
 	}
 
 	/**
@@ -75,7 +85,7 @@ class FileJSON {
 			const data = await fs.promises.readFile(this.path, "utf-8");
 			try {
 				this.data = JSON.parse(data);
-				this.#template = this.data[0];
+				this.#template = this.data[0] ? this.data[0] : null;
 			} catch (err) {
 				throw new Error(`failed to parse JSON-data`);
 			}
@@ -166,6 +176,8 @@ class FileJSON {
 	add(add) {
 		this._validate(add);
 
+		this.#template = this.#template === null ? add : this.#template;
+
 		const typeTemplate = typeof this.#template,
 			typeAdd = typeof add;
 
@@ -178,8 +190,10 @@ class FileJSON {
 
 		this.data.push(add);
 
-		return `Item was succesful add ID:${add.ID}`;
+		return `item was succesful add ID:${add.ID}`;
 	}
+
+	delete() {}
 }
 
 module.exports = {

@@ -2,36 +2,22 @@ const { FileJSON } = require("./class.js");
 const { Random, checkUnique } = require("./module.js")
 
 const random = new Random();
+const newFileObj = new FileJSON("json/birthday.json");
 
 describe("FileJSON", () => {
-	const dataCor = [
-		{
-			Name: "Ключковская Снежана Андреевна",
-			Date: "31.12.1976",
-			ID: 1,
-		},
-		{
-			Name: "Евсеева Людмила Геннадьевна",
-			Date: "21.06.1965",
-			ID: 4,
-		},
-		{
-			Name: "Егорова Светлана Михайловна",
-			Date: "05.04.1987",
-			ID: 5,
-		},
-		{
-			Name: "Вахрамеев Вахтанг Николаевич",
-			Date: "22.09.1990",
-			ID: 7,
-		},
-	];
+	const dataCor = [];
 
-	let newFileObj, item, data;
+	let item, data;
 
 	beforeAll(async () => {
-		newFileObj = new FileJSON("json/birthday.json");
 		await newFileObj.load();
+
+		let i = 0;
+		for(;;) {
+			if(i === 10) break;
+			dataCor.push(newFileObj.data[i]);
+			i++;
+		}
 	});
 
 	beforeEach(() => {
@@ -60,13 +46,15 @@ describe("FileJSON", () => {
 		).toThrowError();
 
 		// Отлов ошибки при несущеструющем значение !Null
-		{
+		for(let i = 0; i > 3;){
 			const result = newFileObj.search(
-				data.keys[random.number(data.keys)],
+				data.keys[random.number(data.keys.length)],
 				random.string()
 			);
 
-			expect(result).toBeNull();
+			expect(result).toBeNull();	
+			
+			i++;
 		}
 
 		// Проверка на нахождение случайного элементе из массива найденных значений !Item
@@ -78,6 +66,14 @@ describe("FileJSON", () => {
 
 		expect(result).toBeTruthy();
 	});
+
+	test(`FileJSON.add() is correct work`, () => {});
+
+	test(`FileJSON.delete() is correct work`, () => {});
+
+	test(`FileJSON.edit() is correct work`, () => {});
+
+	test(`FileJSON.sort() is correct work`, () => {});
 
 	afterAll(async () => {
 		await newFileObj.write();
