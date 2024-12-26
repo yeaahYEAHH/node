@@ -35,7 +35,7 @@ class FileJSON {
 			);
 
 		for (let item of parametr)
-			if (item === undefined) throw new Error(`parametrs is undefind`);
+			if (item === undefined) throw new Error(`parametr(s) is undefind`);
 	}
 
 	/**
@@ -46,15 +46,7 @@ class FileJSON {
 	 */
 	_validateField(field) {
 		if (!this.data.some((item) => field in item))
-			throw new Error(`field "${field}" is not exist`);
-	}
-
-	_createIndex(field) {
-		this.#index[field] = {};
-		this.data.forEach((item, idx) => {
-			this.#index[field][item[field]] = idx;
-		});
-		console.log(this.#index);
+			throw new Error(`field "${field}" does not exist`);
 	}
 
 	/**
@@ -166,7 +158,7 @@ class FileJSON {
 	}
 
 	/**
-	 * Добавляет новый элемент в данные.
+	 * Добавляет новый элемент в дату.
 	 * @public
 	 * @param {Object} add - Новый элемент для добавления.
 	 * @returns {string} Сообщение об успешном добавлении.
@@ -181,19 +173,17 @@ class FileJSON {
 		const typeTemplate = typeof this.#template,
 			typeAdd = typeof add;
 
-		if (!typeAdd === typeTemplate) throw new TypeError(`type is incorrect`);
+		if (typeAdd !== typeTemplate) throw new TypeError(`type is incorrect`);
 
 		add.ID = random.id();
 
-		if (isEqualByType(add, this.#template))
+		if (!isEqualByType(add, this.#template, true))
 			throw new Error(`structure and exits item(s) is not a equal`);
 
 		this.data.push(add);
 
 		return `item was succesful add ID:${add.ID}`;
 	}
-
-	delete() {}
 }
 
 module.exports = {
