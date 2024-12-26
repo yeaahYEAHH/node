@@ -187,7 +187,7 @@ class Random {
  * @returns {boolean} true, если значения равны по указанным критериям, иначе false.
  */
 
-function isEqualByType(a, b, strict = false) {
+function isEqualByType(a, b, strict = false, visited = new WeakMap()) {
 	const typeA = typeof a;
 	const typeB = typeof b;
 
@@ -200,16 +200,14 @@ function isEqualByType(a, b, strict = false) {
 
 	if (keysA.length !== keysB.length) return false;
 
-	return keysA.every((key) => {
-		const valueA = a[key];
-		const valueB = b[key];
+	keysA.sort();
+	keysB.sort();
 
-		return (
-			typeof valueA === typeof valueB &&
-			(typeof valueA === "object"
-				? isEqualByType(valueA, valueB, true)
-				: valueA === valueB)
-		);
+	if (keysA.join("") !== keysB.join("")) return false;
+
+	return keysA.every((key) => {
+
+		return isEqualByType(a[key], b[key])
 	});
 }
 
