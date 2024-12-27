@@ -62,6 +62,7 @@ describe("FileJSON", () => {
 	});
 
 	test(`FileJSON.add() is correct work`, () => {
+		const length = newFileObj.data.length;
 	
 		// Проверка на вызов без параметр(ов) !Error
 		expect(() => newFileObj.add()).toThrowError(
@@ -88,11 +89,47 @@ describe("FileJSON", () => {
 		result = newFileObj.add(add);
 
 		expect(result).toMatch(/item was succesful add ID:.*/);
+
+		// Проверка на изменения FileJSON.data
+		expect(length < newFileObj.data.length).toBeTruthy();
 	});
 
-	// test(`FileJSON.delete() is correct work`, () => {});
+	test(`FileJSON.delete() is correct work`, () => {
+		const length = newFileObj.data.length;
 
-	// test(`FileJSON.edit() is correct work`, () => {});
+		// Проверка на вызов без параметр(ов) !Error
+		expect(() => newFileObj.delete()).toThrowError(
+			"parametr(s) is undefind"
+		);
+
+		// Отлов ошибки при несуществующем поле !Error
+		expect(() =>
+			newFileObj.delete(random.string(), item.value)
+		).toThrowError(/field .* does not exist/);
+
+		// Отлов ошибки при несущеструющем значение !Error
+		for (let i = 0; i > 3; ) {
+			const result = newFileObj.delete(
+				data.keys[random.number(data.keys.length)],
+				random.string()
+			);
+
+			expect(result).toThrowError(
+				/item with field ".*" and value ".*" not found/
+			);
+
+			i++;
+		}
+
+		// Проверка на успешное удаление !Item(s)
+		const result = newFileObj.delete(item.field, item.value);
+		expect(result).toMatch(/item with \w*: .* was successfully deleted/);
+
+		// Проверка на изменения FileJSON.data
+		expect(length > newFileObj.data.length).toBeTruthy();
+	});
+
+	test(`FileJSON.edit() is correct work`, () => {});
 
 	// test(`FileJSON.sort() is correct work`, () => {});
 

@@ -20,7 +20,7 @@ class FileJSON {
 	 * @type {Object}
 	 */
 	#template;
-	#index = {};
+	#index = [];
 
 	/**
 	 * Валидация переданных параметров и наличия загруженных данных.
@@ -124,11 +124,19 @@ class FileJSON {
 		this._validateField(field);
 
 		const regexp = new RegExp(value);
+		this.#index = [];
 
-		const items = this.data.filter((item) => {
-			return typeof value === "string" || value instanceof String
-				? regexp.test(item[field])
-				: item[field] === value;
+		const items = this.data.filter((item, index) => {
+			const result =
+				typeof value === "string" || value instanceof String
+					? regexp.test(item[field])
+					: item[field] === value;
+
+			if (result) {
+				this.#index.push(index);
+			}
+
+			return result;
 		});
 
 		if (items.length == 0) return null;
@@ -183,6 +191,33 @@ class FileJSON {
 		this.data.push(add);
 
 		return `item was succesful add ID:${add.ID}`;
+	}
+
+	/**
+	 * Удаляет элементы из данных, которые соответствуют указанным полю и значению.
+	 * @param {string} field - Поле, по которому осуществляется поиск элементов.
+	 * @param {*} value - Значение, по которому осуществляется поиск элементов.
+	 * @throws {Error} Если значение или поле не указаны.
+	 * @throws {Error} Если элементы с указанным полем и значением не найдены.
+	 * @returns {string} Сообщение о успешном удалении элементов.
+	 */	
+
+	delete(field, value) {
+		this._validate(value);
+		this._validateField(field);
+
+		this.search(field, value);
+
+		if (this.#index === undefined)
+			throw new Error(
+				`item with field "${field}" and value "${value}" not found`
+			);
+
+		for (let index of this.#index) {
+			this.data.splice(parseInt(index), 1);
+		}
+
+		return `item with ${field}: ${value} was successfully deleted`;
 	}
 }
 
