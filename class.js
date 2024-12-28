@@ -123,12 +123,12 @@ class FileJSON {
 		this._validate(field, value);
 		this._validateField(field);
 
-		const regexp = new RegExp(value);
+		const regexp = new RegExp(value.toString());
 		this.#index = [];
 
 		const items = this.data.filter((item, index) => {
 			const result =
-				typeof value === "string" || value instanceof String
+				typeof value === "string"
 					? regexp.test(item[field])
 					: item[field] === value;
 
@@ -200,7 +200,7 @@ class FileJSON {
 	 * @throws {Error} Если значение или поле не указаны.
 	 * @throws {Error} Если элементы с указанным полем и значением не найдены.
 	 * @returns {string} Сообщение о успешном удалении элементов.
-	 */	
+	 */
 
 	delete(field, value) {
 		this._validate(value);
@@ -208,7 +208,7 @@ class FileJSON {
 
 		this.search(field, value);
 
-		if (this.#index === undefined)
+		if (this.#index.length === 0)
 			throw new Error(
 				`item with field "${field}" and value "${value}" not found`
 			);
@@ -218,6 +218,29 @@ class FileJSON {
 		}
 
 		return `item with ${field}: ${value} was successfully deleted`;
+	}
+
+	edit(unique, newValue) {
+		this._validate(unique, newValue);
+
+		const typeTemplate = typeof this.#template,
+			typeEdit = typeof newValue;
+
+		if (typeEdit !== typeTemplate) throw new TypeError(`type is incorrect`);
+
+		if (!isEqualByType(newValue, this.#template, true))
+			throw new Error(`structure and exits item(s) is not a equal`);
+
+		this.search("ID", parseInt(unique))
+
+		if (this.#index.length === 0)
+			throw new Error(
+				`item with field "ID" and value "${unique}" not found`
+			);
+
+		this.data[this.#index[0]] = newValue;
+
+		return `item with ID:${unique} was successfully edited`;
 	}
 }
 

@@ -31,9 +31,10 @@ describe("FileJSON", () => {
 	});
 
 	test(`FileJSON.search() is correct work`, () => {
-
 		// Проверка на вызов без параметр(ов) !Error
-		expect(() => newFileObj.search()).toThrowError("parametr(s) is undefind");
+		expect(() => newFileObj.search()).toThrowError(
+			"parametr(s) is undefind"
+		);
 		expect(() => newFileObj.search(random.field(data.keys))).toThrowError(
 			"parametr(s) is undefind"
 		);
@@ -44,7 +45,7 @@ describe("FileJSON", () => {
 		).toThrowError(/field .* does not exist/);
 
 		// Отлов ошибки при несущеструющем значение !Null
-		for(let i = 0; i > 3;){
+		for (let i = 0; i > 3; ) {
 			const result = newFileObj.search(
 				data.keys[random.number(data.keys.length)],
 				random.string()
@@ -63,11 +64,9 @@ describe("FileJSON", () => {
 
 	test(`FileJSON.add() is correct work`, () => {
 		const length = newFileObj.data.length;
-	
+
 		// Проверка на вызов без параметр(ов) !Error
-		expect(() => newFileObj.add()).toThrowError(
-			"parametr(s) is undefind"
-		);
+		expect(() => newFileObj.add()).toThrowError("parametr(s) is undefind");
 
 		// Ошибка при несоотвествии типу !Item шаблону
 		expect(() => newFileObj.add(random.boolean())).toThrowError(
@@ -129,9 +128,49 @@ describe("FileJSON", () => {
 		expect(length > newFileObj.data.length).toBeTruthy();
 	});
 
-	test(`FileJSON.edit() is correct work`, () => {});
+	test(`FileJSON.edit() is correct work`, () => {
+		const edit = {};
 
-	// test(`FileJSON.sort() is correct work`, () => {});
+		// Проверка на вызов без параметр(ов) !Error
+		expect(() => newFileObj.edit()).toThrowError("parametr(s) is undefind");
+
+		// Ошибка при несоотвествии типу !Item шаблону
+		expect(() =>
+			newFileObj.edit(random.number(), random.boolean())
+		).toThrowError("type is incorrect");
+
+		// Ошибка при несоотвествии структуре !Item, существующими шаблону
+		expect(() =>
+			newFileObj.edit(random.number(), [
+				(random.number(), random.boolean()),
+			])
+		).toThrowError("structure and exits item(s) is not a equal");
+
+		// Отлов ошибки при несущеструющем ID !Error
+		expect(() =>
+			newFileObj.edit(random.string(undefined, 4), data.item)
+		).toThrowError(/item with field "ID" and value ".*" not found/);
+
+		// Проверка на успешное редактирование !Item
+		for(let i = 0; i < 3; i++){
+			for (let i in data.item) {
+				if (i === "ID") {
+					edit[i] = data.item[i];
+					continue;
+				}
+				edit[i] = random.string(undefined, 10);
+			}
+
+			const result = newFileObj.edit(edit.ID, edit);
+			expect(result).toMatch(/item with ID:.* was successfully edited/);
+		}
+
+		// Проверка на изменение !Item
+		
+		expect(Object.keys(edit).some((key) => edit[key] !== data.item[key])).toBeTruthy();
+	});
+
+	test(`FileJSON.sort() is correct work`, () => {});
 
 	// afterAll(async () => {
 	// 	await newFileObj.write();
