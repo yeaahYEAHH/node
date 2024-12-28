@@ -14,7 +14,7 @@ const random = new Random();
  * Предоставляет методы для работы с данными внутри JSON-файлом.
  * @class
  */
-class FileJSON {
+class FileArrayJSON {
 	/**
 	 * @private
 	 * @type {Object}
@@ -220,6 +220,16 @@ class FileJSON {
 		return `item with ${field}: ${value} was successfully deleted`;
 	}
 
+	/**
+	 * Редактирует элемент в JSON-данных по уникальному идентификатору.
+	 * @param {number|string} unique - Уникальный идентификатор элемента для поиска (поле "ID").
+	 * @param {object} newValue - Новый объект, заменяющий существующий элемент.
+	 * @throws {Error} Если параметр `unique` или `newValue` не указан.
+	 * @throws {TypeError} Если тип нового значения не совпадает с шаблонным типом.
+	 * @throws {Error} Если структура нового объекта не соответствует шаблону.
+	 * @throws {Error} Если элемент с указанным идентификатором не найден.
+	 * @returns {string} Сообщение об успешном редактировании элемента.
+	 */
 	edit(unique, newValue) {
 		this._validate(unique, newValue);
 
@@ -231,7 +241,7 @@ class FileJSON {
 		if (!isEqualByType(newValue, this.#template, true))
 			throw new Error(`structure and exits item(s) is not a equal`);
 
-		this.search("ID", parseInt(unique))
+		this.search("ID", parseInt(unique));
 
 		if (this.#index.length === 0)
 			throw new Error(
@@ -244,6 +254,31 @@ class FileJSON {
 	}
 }
 
+class FileDateJSON extends FileArrayJSON {
+	sort(field, order = true, byDate) {
+		if (byDate === null) return super.sort(field, order);
+
+		this.data.sort((a, b) => {
+			// Дата по стандарту дд.мм.гггг
+			const [dayA, monthA, yearA] = a[field].split(".");
+
+			const [dayB, monthB, yearB] = b[field].split(".");
+
+			switch (byDate) {
+				case 1:
+					return order ? dayA - dayB : dayB - dayA;
+				case 0:
+					return order ? monthA - monthB : monthB - monthA;
+				case -1:
+					return order ? yearA - yearB : yearB - yearA;
+			}
+		});
+
+		return this.data;
+	}
+}
+
 module.exports = {
-	FileJSON: FileJSON,
+	FileArray: FileArrayJSON,
+	FileDate: FileDateJSON,
 };
