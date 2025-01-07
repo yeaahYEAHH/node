@@ -254,27 +254,94 @@ class FileArrayJSON {
 	}
 }
 
+/**
+ * Класс для работы с JSON-файлами, содержащими данные с датами в формате "дд.мм.гггг".
+ * Наследуется от FileArrayJSON.
+ * @class
+ */
 class FileDateJSON extends FileArrayJSON {
+	/**
+	 * Регулярное выражение для проверки формата даты "дд.мм.гггг".
+	 * @private
+	 * @type {RegExp}
+	 */
+	#dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
+
+	/**
+	 * Форматер для получения текущей даты в формате "дд.мм".
+	 * @private
+	 * @type {Intl.DateTimeFormat}
+	 */
+	#formatter = new Intl.DateTimeFormat("ru", {
+		month: "2-digit",
+		day: "2-digit",
+	});
+
+	/**
+	 * Сортирует элементы JSON по указанному полю и критерию даты.
+	 * @param {string} field - Поле для сортировки.
+	 * @param {boolean} [order=true] - Порядок сортировки: `true` для возрастания, `false` для убывания.
+	 * @param {"day"|"month"|"year"} [byDate=null] - Критерий сортировки по дате: `"day"`, `"month"` или `"year"`.
+	 * @returns {Array<object>} Отсортированный массив.
+	 * @throws {Error} Если поле не соответствует формату "дд.мм.гггг" или указан неверный критерий сортировки.
+	 * @throws {Error} Если поле не существует.
+	 */
 	sort(field, order = true, byDate) {
 		if (byDate === null) return super.sort(field, order);
 
+		this._validate(field, order, byDate);
+		this._validateField(field);
+
 		this.data.sort((a, b) => {
 			// Дата по стандарту дд.мм.гггг
-			const [dayA, monthA, yearA] = a[field].split(".");
+			if (
+				!this.#dateRegex.test(a[field]) ||
+				!this.#dateRegex.test(b[field])
+			) {
+				throw new Error(
+					`field "${field}" does not match the date format dd.mm.yyyy`
+				);
+			}
 
-			const [dayB, monthB, yearB] = b[field].split(".");
+			const [dayA, monthA, yearA] = a[field]
+				.split(".")
+				.map((value) => parseInt(value, 10));
+
+			const [dayB, monthB, yearB] = b[field]
+				.split(".")
+				.map((value) => parseInt(value, 10));
 
 			switch (byDate) {
-				case 1:
+				case "day":
 					return order ? dayA - dayB : dayB - dayA;
-				case 0:
+				case "month":
 					return order ? monthA - monthB : monthB - monthA;
-				case -1:
+				case "year":
 					return order ? yearA - yearB : yearB - yearA;
+				default:
+					throw new Error(`invalid sort criterion "${byDate}"`);
 			}
 		});
 
 		return this.data;
+	}
+
+	/**
+	 * Возвращает элементы JSON, соответствующие указанной дате, или элементы с текущей датой.
+	 * @param {string} [date] - Дата в формате "дд.мм.гггг". Если не указана, используется текущая дата.
+	 * @returns {Array<object>|null} Массив объектов, соответствующих дате, или `null`, если совпадений нет.
+	 * @throws {Error} Если указанная дата не соответствует формату "дд.мм.гггг".
+	 */
+	now(date = undefined) {
+		if (date) {
+			if (!this.#dateRegex.test(date)) {
+				throw new Error("Date must be in format dd.mm.yyyy");
+			}
+			return super.search("Date", date);
+		}
+
+		const today = this.#formatter.format(new Date());
+		return super.search("Date", today);
 	}
 }
 
