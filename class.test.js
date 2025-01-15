@@ -1,10 +1,18 @@
-const { FileJSON } = require("./class.js");
+const { FileArray, FileDate, FileTime } = require("./class.js");
 const { Random, checkUnique, isEqualByType } = require("./module.js");
 
 const random = new Random();
-const newFileObj = new FileJSON("json/birthday.json");
 
-describe("FileJSON", () => {
+const src = [
+	"json/birthday.json",
+	"json/scheduleLDK.json",
+	"json/scheduleMonday.json",
+	"json/scheduleUAK.json",
+	"json/scheduleUPK.json",
+];
+
+describe("FileArray", () => {
+	const newFileObj = new FileArray(src[random.number(src.length - 1)]);
 	const dataCor = [];
 	let item, data;
 
@@ -24,13 +32,13 @@ describe("FileJSON", () => {
 		data = random.get();
 	});
 
-	test(`FileJSON all ID is unique`, () => {
+	test(`FileArray all ID is unique`, () => {
 		const result = checkUnique(newFileObj.data, "ID");
 
 		expect(result).toBeTruthy();
 	});
 
-	test(`FileJSON.search() is correct work`, () => {
+	test(`FileArray.search() is correct work`, () => {
 		// Проверка на вызов без параметр(ов) !Error
 		expect(() => newFileObj.search()).toThrowError(
 			"parametr(s) is undefind"
@@ -62,7 +70,7 @@ describe("FileJSON", () => {
 		expect(items).toContainEqual(data.item);
 	});
 
-	test(`FileJSON.add() is correct work`, () => {
+	test(`FileArray.add() is correct work`, () => {
 		const length = newFileObj.data.length;
 
 		// Проверка на вызов без параметр(ов) !Error
@@ -89,11 +97,11 @@ describe("FileJSON", () => {
 
 		expect(result).toMatch(/item was succesful add ID:.*/);
 
-		// Проверка на изменения FileJSON.data
+		// Проверка на изменения FileArray.data
 		expect(length < newFileObj.data.length).toBeTruthy();
 	});
 
-	test(`FileJSON.delete() is correct work`, () => {
+	test(`FileArray.delete() is correct work`, () => {
 		const length = newFileObj.data.length;
 
 		// Проверка на вызов без параметр(ов) !Error
@@ -124,11 +132,11 @@ describe("FileJSON", () => {
 		const result = newFileObj.delete(item.field, item.value);
 		expect(result).toMatch(/item with \w*: .* was successfully deleted/);
 
-		// Проверка на изменения FileJSON.data
+		// Проверка на изменения FileArray.data
 		expect(length > newFileObj.data.length).toBeTruthy();
 	});
 
-	test(`FileJSON.edit() is correct work`, () => {
+	test(`FileArray.edit() is correct work`, () => {
 		const edit = {};
 
 		// Проверка на вызов без параметр(ов) !Error
@@ -152,7 +160,7 @@ describe("FileJSON", () => {
 		).toThrowError(/item with field "ID" and value ".*" not found/);
 
 		// Проверка на успешное редактирование !Item
-		for(let i = 0; i < 3; i++){
+		for (let i = 0; i < 3; i++) {
 			for (let i in data.item) {
 				if (i === "ID") {
 					edit[i] = data.item[i];
@@ -166,13 +174,114 @@ describe("FileJSON", () => {
 		}
 
 		// Проверка на изменение !Item
-		
-		expect(Object.keys(edit).some((key) => edit[key] !== data.item[key])).toBeTruthy();
+
+		expect(
+			Object.keys(edit).some((key) => edit[key] !== data.item[key])
+		).toBeTruthy();
+	});
+});
+
+describe("FileDate", () => {
+	const newFileObj = new FileDate(src[0]);
+	const dataCor = [];
+	let item, data;
+
+	beforeAll(async () => {
+		await newFileObj.load();
+
+		let i = 0;
+		for (;;) {
+			if (i === 10) break;
+			dataCor.push(newFileObj.data[i]);
+			i++;
+		}
 	});
 
-	test(`FileJSON.sort() is correct work`, () => {});
+	beforeEach(() => {
+		item = random.item(dataCor);
+		data = random.get();
+	});
 
-	// afterAll(async () => {
-	// 	await newFileObj.write();
-	// });
+	test(`FileDate.date() is correct work`, () => {
+		// Проверка на нахождение элемента по дата dd.mm.yyyy
+		{
+			const result = newFileObj.now(data.item["Date"]);
+			expect(result).toContainEqual(data.item);
+		}
+
+		// Проверка на нахождение несуществующего элемента
+		{
+			const result = newFileObj.now("32.13.2099");
+			expect(result).toBeNull();
+		}
+	});
+});
+
+describe("FileTime", () => {
+	// const newFileObj = new FileTime(src[random.range(1, src.length - 1)]);
+	const newFileObj = new FileTime(src[1]);
+	const dataCor = [];
+	let item, data;
+
+	beforeAll(async () => {
+		await newFileObj.load();
+
+		let i = 0;
+		for (;;) {
+			if (i === 10) break;
+			dataCor.push(newFileObj.data[i]);
+			i++;
+		}
+	});
+
+	beforeEach(() => {
+		item = random.item(dataCor);
+		data = random.get();
+	});
+
+	test(`FileTime.now() is correct work`, () => {
+		const [fieldStart, fieldEnd] = [data.keys[0], data.keys[1]];
+
+		// Проверка на вызов без параметр(ов) !Error
+		expect(() => newFileObj.now()).toThrowError("parametr(s) is undefind");
+
+		// Отлов ошибки при несуществующем поле !Error
+		expect(() =>
+			newFileObj.now(
+				random.string(undefined, 5),
+				random.string(undefined, 5),
+				random.string(undefined, 5)
+			)
+		).toThrowError();
+
+		// Отлов ошибки при несоответствии time формату hh:mm !Error
+		expect(() =>
+			newFileObj.now(fieldStart, fieldEnd, random.string(undefined, 10))
+		).toThrowError(`time does not match the time format hh:ii`);
+
+		// Проверка на возвращаемый time !Item
+		{
+			const result = [
+				newFileObj.now(fieldStart, fieldEnd, data.item[fieldEnd]),
+			];
+			expect(result).toContain(data.item);
+		}
+
+		// Проверка на возвращаемый time !Item
+		{
+			const time = new Intl.DateTimeFormat("ru", {
+				timeZone: "Asia/Yekaterinburg",
+				hour: "2-digit",
+				minute: "2-digit",
+			}).format(new Date());
+
+			const result = newFileObj.now(fieldStart, fieldEnd, time);
+
+			if (result !== null) {
+				expect(result).toBeDefined();
+			} else {
+				expect(result).toBeNull();
+			}
+		}
+	});
 });
