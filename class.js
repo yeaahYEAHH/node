@@ -345,7 +345,42 @@ class FileDateJSON extends FileArrayJSON {
 	}
 }
 
+/**
+ * Класс для работы с JSON-файлами, содержащими данные с времени в формате "чч:мм".
+ * Наследуется от FileArrayJSON.
+ * @class
+ */
+class FileTimeJSON extends FileArrayJSON {
+	#formatter = new Intl.DateTimeFormat("ru", {
+		hour: "numeric",
+		minute: "numeric",
+	});
+
+	#timeRegExp = /^[0-2][0-9]:[0-5][0-9]$/;
+
+	now(start, end, time) {
+		this._validate(time, start, end);
+		this._validateField(start, end);
+
+		time = time ? time : this.#formatter.format(Date.now());
+
+		// Время по стандарту чч:мм
+		if (!this.#timeRegExp.test(time)) {
+			throw new Error(
+				`time does not match the time format hh:ii`
+			);
+		}
+
+		const found = this.data.find(
+			(item) => item[start] <= time && time <= item[end]
+		);
+
+		return found;
+	}
+}
+
 module.exports = {
 	FileArray: FileArrayJSON,
 	FileDate: FileDateJSON,
+	FileTime: FileTimeJSON
 };
