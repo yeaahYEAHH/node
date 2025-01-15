@@ -358,6 +358,16 @@ class FileTimeJSON extends FileArrayJSON {
 
 	#timeRegExp = /^[0-2][0-9]:[0-5][0-9]$/;
 
+	/**
+	 * Ищет элемент в данных, у которого текущее или указанное время попадает в диапазон между полями `start` и `end`.
+	 *
+	 * @param {string} start - Название поля в объекте данных, содержащего время начала диапазона.
+	 * @param {string} end - Название поля в объекте данных, содержащего время окончания диапазона.
+	 * @param {string} [time] - Время для поиска в формате `"HH:MM"`. Если не указано, используется текущее системное время.
+	 * @returns {Object|null} Найденный объект, если время попадает в диапазон, иначе `null`.
+	 * @throws {Error} Если параметры `start` или `end` не существуют в данных.
+	 * @throws {Error} Если параметр `time` не соответствует формату `"HH:MM"`.
+	 */
 	now(start, end, time) {
 		this._validate(time, start, end);
 		this._validateField(start, end);
@@ -366,9 +376,7 @@ class FileTimeJSON extends FileArrayJSON {
 
 		// Время по стандарту чч:мм
 		if (!this.#timeRegExp.test(time)) {
-			throw new Error(
-				`time does not match the time format hh:ii`
-			);
+			throw new Error(`time does not match the time format hh:ii`);
 		}
 
 		const found = this.data.find(
@@ -382,5 +390,5 @@ class FileTimeJSON extends FileArrayJSON {
 module.exports = {
 	FileArray: FileArrayJSON,
 	FileDate: FileDateJSON,
-	FileTime: FileTimeJSON
+	FileTime: FileTimeJSON,
 };
