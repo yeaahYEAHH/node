@@ -6,6 +6,8 @@
 /**
  * Класс, вызывающий произвольные и случайные структуры данных
  * @class
+ * @example
+ * const random = new Random()
  */
 class Random {
 	#object = null;
@@ -18,6 +20,21 @@ class Random {
 	 *
 	 * @throws {Error} Если length не указан или меньше 1.
 	 * @throws {TypeError} Если charset не является строкой.
+	 *
+	 * @example
+	 * string(); // Вернет случайную строку из 5 символов "abcdefghijklmnopqrstuvwxyz"
+	 *
+	 * @example
+	 * string("0123456789", 10); // Вернет случайную строку из 10 цифр, например "8392058173"
+	 *
+	 * @example
+	 * string("ABC", 3); // Вернет строку из 3 символов "ABC", например "CAB"
+	 *
+	 * @example
+	 * string("❤★♞", 2); // Вернет строку из 2 символов, например "❤♞"
+	 *
+	 * @example
+	 * string("", 5); // Выбросит RangeError, так как `charset` пуст
 	 */
 	string(charset = "abcdefghijklmnopqrstuvwxyz", length = 5) {
 		if (typeof length !== "number" || length < 1)
@@ -35,8 +52,17 @@ class Random {
 	 * Генерирует случайного числа из указанного.
 	 * @param {number} [number=100] - Число генерируемой от 0 до number.
 	 * @returns {number} Случайное число.
-	 *
 	 * @throws {TypeError} Заданное значение не является числом.
+	 *
+	 * @example
+	 * number(); // Вернет случайное число от 0 до 100
+	 *
+	 * @example
+	 * number(10); // Вернет случайное число от 0 до 10
+	 *
+	 * @example
+	 * number("10"); // Выбросит TypeError
+	 *
 	 */
 	number(number = 100) {
 		if (typeof number !== "number")
@@ -46,11 +72,53 @@ class Random {
 	}
 
 	/**
+	 * Генерирует случайное целое число в указанном диапазоне [begin, end).
+	 *
+	 * @param {number} [begin=0] - Начальное значение диапазона (включительно).
+	 * @param {number} [end=100] - Конечное значение диапазона (исключительно).
+	 * @returns {number} Случайное целое число в пределах диапазона.
+	 * @throws {TypeError} Если параметры `begin` или `end` не являются числами.
+	 * @throws {RangeError} Если `begin` больше или равен `end`.
+	 *
+	 * @example
+	 * range(5, 10); // Вернет случайное число от 5 до 9
+	 *
+	 * @example
+	 * range(); // Вернет случайное число от 0 до 99
+	 *
+	 * @example
+	 * range(10, 5); // Выбросит RangeError
+	 */
+	range(begin = 0, end = 100) {
+		if (typeof begin !== "number" || typeof end !== "number")
+			return new TypeError(`Параметр number должен быть числом`);
+
+		if (begin >= end) {
+			throw new RangeError(
+				"Параметр begin должен быть меньше параметра end"
+			);
+		}
+
+		return ~~(Math.random() * (end - begin)) + begin;
+	}
+
+	/**
 	 * Генерирует случайную подстроку из указанного.
 	 * @param {string} [string="Hello, world"] - Строка, из которой необходимо получить подстроку
 	 * @returns {string} Случайная подстрока из заданной строки
-	 *
 	 * @throws {TypeError} Если string не является строкой.
+	 *
+	 * @example
+	 * substring("abcdef"); // Может вернуть "bc", "de", "a" или другую подстроку.
+	 *
+	 * @example
+	 * substring(); // Вернет случайную подстроку из строки "Hello, world".
+	 *
+	 * @example
+	 * substring(""); // Вернет пустую строку, так как входная строка пуста.
+	 *
+	 * @example
+	 * substring(12345); // Выбросит TypeError, так как параметр не является строкой.
 	 */
 	substring(string = "Hello, world") {
 		if (typeof string !== "string")
@@ -76,11 +144,28 @@ class Random {
 	 * @param {Array} fields - Массив значений.
 	 * @returns {*} Случайный элемент массива.
 	 * @throws {TypeError} Если fields не является массивом.
+	 * @throws {Error} Если массив `fields` пустой.
+	 * 
+	 * @example
+	 * field(["a", "b", "c"]); // Может вернуть "a", "b" или "c".
+	 *
+	 * @example
+	 * field([1, 2, 3, 4]); // Может вернуть 1, 2, 3 или 4.
+	 *
+	 * @example
+	 * field([]); // Выбросит ошибку, так как массив пуст.
+	 *
+	 * @example
+	 * field("not an array"); // Выбросит TypeError, так как параметр не массив.
 	 */
 
 	field(fields) {
 		if (!Array.isArray(fields))
 			throw new TypeError("Параметр fields должен быть массивом");
+
+		if (fields.length === 0) {
+			throw new Error("Параметр fields не должен быть пустым массивом");
+		}
 
 		return fields[this.number(fields.length)];
 	}
@@ -206,8 +291,7 @@ function isEqualByType(a, b, strict = false, visited = new WeakMap()) {
 	if (keysA.join("") !== keysB.join("")) return false;
 
 	return keysA.every((key) => {
-
-		return isEqualByType(a[key], b[key])
+		return isEqualByType(a[key], b[key]);
 	});
 }
 
