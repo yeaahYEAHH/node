@@ -221,7 +221,13 @@ describe("FileTime", () => {
 	// const newFileObj = new FileTime(src[random.range(1, src.length - 1)]);
 	const newFileObj = new FileTime(src[1]);
 	const dataCor = [];
-	let item, data;
+	let fieldStart, fieldEnd;
+	let data;
+	const time = new Intl.DateTimeFormat("ru", {
+				timeZone: "Asia/Yekaterinburg",
+				hour: "2-digit",
+				minute: "2-digit",
+			}).format(new Date());
 
 	beforeAll(async () => {
 		await newFileObj.load();
@@ -235,13 +241,12 @@ describe("FileTime", () => {
 	});
 
 	beforeEach(() => {
-		item = random.item(dataCor);
+		random.item(dataCor);
 		data = random.get();
+		[fieldStart, fieldEnd] = [data.keys[0], data.keys[1]];
 	});
 
 	test(`FileTime.now() is correct work`, () => {
-		const [fieldStart, fieldEnd] = [data.keys[0], data.keys[1]];
-
 		// Проверка на вызов без параметр(ов) !Error
 		expect(() => newFileObj.now()).toThrowError("parametr(s) is undefind");
 
@@ -269,12 +274,6 @@ describe("FileTime", () => {
 
 		// Проверка на возвращаемый time !Item
 		{
-			const time = new Intl.DateTimeFormat("ru", {
-				timeZone: "Asia/Yekaterinburg",
-				hour: "2-digit",
-				minute: "2-digit",
-			}).format(new Date());
-
 			const result = newFileObj.now(fieldStart, fieldEnd, time);
 
 			if (result !== null) {
@@ -284,4 +283,33 @@ describe("FileTime", () => {
 			}
 		}
 	});
+
+	test(`FileTime.near() is correct work`, () => {
+		// Проверка на вызов без параметр(ов) !Error
+		expect(() => newFileObj.near()).toThrowError("parametr(s) is undefind");
+
+		// Отлов ошибки при несуществующем поле !Error
+		expect(() =>
+			newFileObj.near(
+				random.string(undefined, 5),
+				random.string(undefined, 5)
+			)
+		).toThrowError();
+
+		// Отлов ошибки при несоответствии time формату hh:mm !Error
+		expect(() =>
+			newFileObj.near(fieldStart, random.string(undefined, 10))
+		).toThrowError(`time does not match the time format hh:ii`);
+
+		// Проверка на возвращаемый time !Item
+		{
+			const result = newFileObj.near(time, fieldStart);
+
+			if (result !== null) {
+				expect(result).toBeDefined();
+			} else {
+				expect(result).toBeNull();
+			}
+		}
+	})
 });
