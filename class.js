@@ -108,7 +108,9 @@ class FileArrayJSON {
 		}
 	}
 
-	// async create() {} для создание файла
+	async create() {
+		
+	} 
 
 	// async save() {} для обновления и сохранения файла
 
@@ -384,6 +386,23 @@ class FileTimeJSON extends FileArrayJSON {
 		);
 
 		return found;
+	}
+
+	near(time, start) {
+		this._validate(time, start);
+
+		// Время по стандарту чч:мм
+		if (!this.#timeRegExp.test(time)) {
+			throw new Error(`time does not match the time format hh:ii`);
+		}
+
+		this._validateField(start);
+
+		this.sort(start);
+
+		const found = this.data.find((item) => item[start] > time);
+
+		return parseInt(found[start].replace(":", ""), 10) - parseInt(time.replace(":", ""), 10) <= 10 ? found: null;
 	}
 }
 
