@@ -1,7 +1,10 @@
 const http = require("http");
 const path = require("path");
 
+const {FileTime, FileArray} = require("./class.js")
+
 const PORT = 5000;
+const authorization = "admin:admin"; 
 
 function timeStamp() {
 	return new Intl.DateTimeFormat("ru", {
@@ -17,20 +20,18 @@ function timeStamp() {
 
 const server = http.createServer(async (request, response) => {
 	const url = new URL("http://" + request.headers.host + request.url);
-	const [filename, action] = url.pathname.match(/\/\w*/gi);
-	const pathObj = path.join("./json", `${filename}.json`);
-
-	const token = "YWRtaW46YWRtaW4="; // admin : admin
-
-	if (request.headers.authorization !== "Basic " + token) {
+	const pathFile = path.join("./json", `${url.pathname.match(/\/\w*/gi)[0]}.json`);
+	
+	if (
+		request.headers.authorization !==
+		"Basic " + Buffer.from(authorization).toString("base64")
+	) {
 		response.statusCode = 401;
 		response.setHeader("Content-type", "text/plain");
 		console.error(
 			`${timeStamp()} WHO IS? !!Failed Authentication!! Family:${
 				response.socket.remoteFamily
-			}, IP${response.socket.remoteAddress}:${
-				response.socket.remotePort
-			}`
+			}, IP${response.socket.remoteAddress}:${response.socket.remotePort}`
 		);
 		return response.end(`Not Authorization`);
 	}
@@ -41,7 +42,33 @@ const server = http.createServer(async (request, response) => {
 		}, IP${response.socket.remoteAddress}:${response.socket.remotePort}`
 	);
 
-	response.end("end");
+	const file = new FileArray(pathFile)
+	try{
+		await file.load();
+	}catch(err){
+		console.error(`${timeStamp()} !!ERROR!! message: ${err.message}`)
+	}
+
+	if(request.method === "GET"){
+		switch (url.searchParams.get("action")) {
+			case null:
+				response.setHeader("Content-Type", "text/json");
+
+				response.statusCode = 200;
+				break;
+
+			case "sort":
+				response.setHeader("Content-Type", "text/json");
+
+				response.statusCode = 200;
+				break;
+			case "search":
+				response.setHeader("Content-Type", "text/json");
+
+				response.statusCode = 200;
+				break;
+		}
+	}
 });
 
 server.listen(PORT, () => {
