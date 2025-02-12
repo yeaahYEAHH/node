@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { Random, isEqualByType } = require("./module.js");
+const { error } = require("console");
 
 const random = new Random();
 
@@ -109,10 +110,15 @@ class FileArrayJSON {
 	}
 
 	async create() {
-		
-	} 
+		try {
+			await fs.promises.access(this.path);
 
-	// async save() {} для обновления и сохранения файла
+			console.error(`failed to process create file: file is exist`);
+		} catch {
+			await fs.promises.writeFile(this.path, "[]", "utf8");
+			console.log(`succesful create file by ${path.basename(this.path)}`);
+		}
+	}
 
 	/**
 	 * Ищет элементы в данных по заданному полю и значению.
@@ -402,7 +408,11 @@ class FileTimeJSON extends FileArrayJSON {
 
 		const found = this.data.find((item) => item[start] > time);
 
-		return parseInt(found[start].replace(":", ""), 10) - parseInt(time.replace(":", ""), 10) <= 10 ? found: null;
+		return parseInt(found[start].replace(":", ""), 10) -
+			parseInt(time.replace(":", ""), 10) <=
+			10
+			? found
+			: null;
 	}
 }
 
