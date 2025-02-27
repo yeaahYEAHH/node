@@ -166,18 +166,28 @@ class FileArrayJSON {
 		}
 	}
 
+	/**
+	 * Асинхронный метод для удаления основного файл и резервного.
+	 * @async
+	 * @function restore
+	 * @throws {Error} Если произошла ошибка при чтении или записи данных.
+	 */
 	async remove() {
 		try {
-			await fs.promises.unlink(this.path)
+			await fs.promises.unlink(this.pathCopy);
+			await fs.promises.unlink(this.path);
 		} catch (err) {
 			// Если произошла ошибка, выбрасываем ее с дополнительным сообщением
 			throw new Error(`failed to delete JSON-file: ${err.message}`);
 		}
 	}
 
-
+	/**
+	 * Получение данных
+	 * @public
+	 */
 	get() {
-		return this.data
+		return this.data;
 	}
 
 	/**
