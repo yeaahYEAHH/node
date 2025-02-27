@@ -7,3 +7,4 @@ config.json
 test.yml
 npmrc
 env.js
+package-lock.json
