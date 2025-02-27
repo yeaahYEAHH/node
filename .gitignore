@@ -3,7 +3,6 @@ config.json
 /json
 /backup
 *.txt
-.js
 test.yml
 npmrc
 env.js

@@ -1,13 +1,31 @@
 const express = require("express");
 const config = require("./config.json");
 const fs = require("fs/promises");
-const router = require('./module/router.js')
+const router = require('./module/router.js');
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+
 
 const { log, color } = require("./module/module.js");
 const { FileTime, FileDate, FileArray } = require("./module/class.js");
 const { AUTH, PORT, TYPES } = config;
 
 const app = express();
+
+function requestTimeoutMiddleware(timeoutMs) {
+    return (req, res, next) => {
+        const timer = setTimeout(() => {
+            if (!res.headersSent) {
+                log('Timed out', 'Error')
+                res.status(408).json({ type: 'error', message: 'request timeout' });
+            }
+        }, timeoutMs);
+
+        req.clearTimeout = () => clearTimeout(timer);
+
+        next();
+    };
+}
 
 const getFileInstance = (filename) => {
 	if (!TYPES[filename]) {
@@ -81,7 +99,13 @@ const saveConfig = async (req, res) => {
 	}
 };
 
+const swaggerDocument = YAML.load("./api/api-docs.yml");
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use(authorization);
+
+app.use(requestTimeoutMiddleware(5000));
 
 app.use("/:filename/create/:type", (req, res) => {
 	handleFileOperation(req, res, "create");
@@ -109,5 +133,6 @@ app.use("/:filename", router)
 app.listen(PORT, () => {
 	console.log("-----------------------|!!START!!|-----------------------");
 	log(color(`Start server on: http://localhost:${PORT}`, "Info"));
+	log(color(`Api docs on: http://localhost:${PORT}/api-docs`, "Info"));
 	console.log("---------------------------------------------------------");
 });

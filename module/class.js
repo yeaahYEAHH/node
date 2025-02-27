@@ -59,6 +59,7 @@ class FileArrayJSON {
 	constructor(file) {
 		this.path = path.join(FOLDER, `${file}.json`);
 		this.pathCopy = path.join(COPY, `${file}.json`);
+		console.log(this.path, this.pathCopy)
 		this.data = null;
 	}
 

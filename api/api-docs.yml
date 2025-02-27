@@ -15,7 +15,7 @@ externalDocs:
   url: https://example.com/docs
 
 servers:
-    - url: http://localhost:3000
+    - url: http://localhost:5000
       description: Основной сервер
       
 security:
@@ -312,7 +312,7 @@ tags:
     description: Операции над **конфигурацией**
     
 paths:
-    /:filename:
+    /{filename}:
         get:
           tags:
             - file
@@ -395,7 +395,7 @@ paths:
             '500':
               $ref: '#/components/responses/500'
 
-    /:filename/:index:
+    /{filename}/{index}:
         get:
           tags:
               - file
@@ -441,7 +441,7 @@ paths:
             '500':
               $ref: '#/components/responses/500'
 
-    /:filename/search:
+    /{filename}/search:
         get:
           tags:
               - file
@@ -473,7 +473,7 @@ paths:
               '500':
                   $ref: '#/components/responses/500'
 
-    /:filename/sort:
+    /{filename}/sort:
         get:
           tags:
               - file
@@ -512,7 +512,7 @@ paths:
               '500':
                   $ref: '#/components/responses/500'
 
-    /:filename/create/:type:
+    /{filename}/create/{type}:
         get:
           tags:
               - file
@@ -538,7 +538,7 @@ paths:
               '500':
                 $ref: '#/components/responses/500'
 
-    /:filename/copy:
+    /{filename}/copy:
         get:
           tags:
               - file
@@ -557,7 +557,7 @@ paths:
               '500':
                 $ref: '#/components/responses/500'
       
-    /:filename/restore:
+    /{filename}/restore:
         get:
           tags:
               - file
@@ -576,7 +576,7 @@ paths:
               '500':
                 $ref: '#/components/responses/500'
 
-    /:filename/remove:
+    /{filename}/remove:
         get:
           tags:
               - file
@@ -595,7 +595,7 @@ paths:
               '500':
                 $ref: '#/components/responses/500'
 
-    /:filename/now:
+    /{filename}/now:
         get:
           tags:
               - birthday
@@ -615,7 +615,7 @@ paths:
               '500':
                 $ref: '#/components/responses/500'
 
-    /:filename/near:
+    /{filename}/near:
         get:
           tags:
               - schedule
