@@ -1,5 +1,7 @@
 /node_modules
-*.json
+config.json
+/json
+/backup
 *.txt
 .js
 test.yml
