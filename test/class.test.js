@@ -1,4 +1,4 @@
-const { FileArray, FileDate, FileTime } = require("../class.js");
+const { FileArray, FileDate, FileTime } = require("../module/class.js");
 const { Random, checkUnique } = require("../module/module.js");
 const { TYPES } = require("../config.json");
 

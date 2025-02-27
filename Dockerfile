@@ -1,7 +1,7 @@
 FROM node:latest
-WORKDIR /schedul
+WORKDIR /schedule
 COPY . .
 RUN npm i
 RUN npm test
 EXPOSE 5000
-CMD ["npm", "app.js"]
+CMD ["npm", "start"]
