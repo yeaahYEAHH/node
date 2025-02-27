@@ -1,13 +1,15 @@
 {
   "dependencies": {
-    "artillery": "^2.0.21",
-    "express": "^4.21.1",
+    "config.json": "^0.0.4",
+    "express": "^4.21.2",
     "nodemon": "^3.1.7"
   },
   "devDependencies": {
     "jest": "^29.7.0"
   },
-  "scripts" : {
-    "test": "jest"
+  "scripts": {
+    "test": "jest",
+    "dev": "nodemon app.js",
+    "start": "node app.js"
   }
 }
