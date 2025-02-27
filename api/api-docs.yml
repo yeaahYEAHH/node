@@ -1,0 +1,646 @@
+openapi: "3.0.3"
+info:
+    title: Расписание 
+    description: | 
+        &mdash; это api-документация к сервису расписание, отвечающий за серверную часть.
+        
+        Можно просматривать список *занятий/события*, добавлять и изменять текущие *занятия/события*
+    version: "1.0.0"
+    contact:
+       name: Разработчик API
+       url: https://example.com/contact
+
+externalDocs:
+  description: Подробная Документация
+  url: https://example.com/docs
+
+servers:
+    - url: http://localhost:3000
+      description: Основной сервер
+      
+security:
+  - basic: [] 
+
+components:
+  schemas:
+        
+      item: 
+        type: object
+        properties:
+          type:
+            type: string
+            example: success
+          data:
+            example:
+            - ID: 0
+              Field: value
+
+      list:
+        type: object
+        properties:
+          type:
+            type: string
+            example: success
+          data:
+            example:
+            - ID: 0
+              Field: value
+            - ID: 1
+              Field: value
+            - ID: 2
+              Field: value
+            - ID: 3
+              Field: value
+            - ID: 4
+              Field: value
+            - ID: 5
+              Field: value
+        
+  responses:
+      'list_200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/list'
+      
+      'item_200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/item'
+
+      'delete_200':
+        description: Успешное удаление
+        content:
+          application/json:
+            example:
+                type: success
+                message: 'item with ${field}: ${value} was successfully deleted'
+
+      'create_200':
+        description: Успешно
+        content:
+          application/json:
+            example:
+                type: success
+                message: create successful
+
+      'create_400':
+        description: Неверный запрос
+        content:
+          application/json:
+            example:
+                type: error
+                message: 'failed to process create file: file is exist'
+
+      'copy_200':
+        description: Успешное создание
+        content:
+          application/json:
+            example:
+                type: success
+                message: copy successful
+
+      'copy_400':
+        description: Неверный запрос
+        content:
+          application/json:
+            example:
+                type: error
+                message: "failed to copy JSON-file: ${err.message}"
+
+      'restore_200':
+        description: Успешное
+        content:
+          application/json:
+            example:
+                type: success
+                message: restore successful
+
+      'restore_400':
+        description: Неверный запрос
+        content:
+          application/json:
+            example:
+                type: error
+                message: "failed to restore JSON-file: ${err.message}"
+
+      'remove_200':
+        description: Успешное создание
+        content:
+          application/json:
+            example:
+                type: success
+                message: remove successful
+
+      'remove_400':
+        description: Неверный запрос
+        content:
+          application/json:
+            example:
+                type: error
+                message: "failed to delete JSON-file: ${err.message}"
+
+      '201':
+          description: Создан
+          content:
+            application/json:
+              example:
+                type: success
+                message: 'item was succesful add ID:{ID}'
+
+      'put_201':
+        description: Модифицирован
+        content:
+          application/json:
+            example:
+              type: success
+              message: 'item with ID:${unique} was successfully edited'
+      
+      'get_400':
+        description: Неверный запрос
+        content:
+          application/json:          
+            examples:
+              Example1:
+                summary: 'parametrs'
+                value:
+                  type: error
+                  message: parametr(s) is undefind
+              Example2:
+                summary: 'field'
+                value:
+                  type: error
+                  message: field "{field}" does not exist
+
+      'sort_400':
+        description: Неверный запрос
+        content:
+          application/json:          
+            examples:
+              Example1:
+                summary: 'parametrs'
+                value:
+                  type: error
+                  message: parametr(s) is undefind
+              Example2:
+                summary: 'date'
+                value:
+                  type: error
+                  message: field "${field}" does not match the date format dd.mm.yyyy
+              Example3:
+                summary: 'date'
+                value:
+                  type: error
+                  message: invalid sort criterion "${byDate}"
+              Example4:
+                summary: 'field'
+                value:
+                  type: error
+                  message: field "${field}" does not exist
+
+      'post_400':
+        description: Неверный запрос
+        content:
+          application/json:          
+            examples:
+              Example1:
+                summary: 'parametrs'
+                value:
+                  type: error
+                  message: parametr(s) is undefind
+              Example2:
+                summary: 'structure'
+                value:
+                  type: error
+                  message: structure and exits item(s) is not a equal
+              Example3:
+                summary: 'type'
+                value:
+                  type: error
+                  message: type is incorrect
+      'put_400':
+        description: Неверный запрос
+        content:
+          application/json:
+            examples:
+             Example1: 
+                summary: 'type'
+                value:
+                  type: error
+                  message: type is incorrect
+             Example2: 
+                summary: 'type'
+                value:
+                  type: error
+                  message: structure and exits item(s) is not a equal
+             Example3: 
+                summary: 'type'
+                value:
+                  type: error
+                  message: parametr(s) is undefind
+                
+      'put_404':
+        description: Неверный запрос
+        content:
+          application/json:
+            examples:
+              Example1: 
+                summary: 'default'
+                value:
+                  type: error
+                  message: not found 
+              Example2: 
+                summary: 'put'
+                value:
+                  type: error
+                  message: item with field "${field}" and value "${value}" not found 
+
+      'delete_404':
+        description: Неверный запрос
+        content:
+          application/json:
+            examples:
+              Example1: 
+                summary: 'default'
+                value:
+                  type: error
+                  message: not found
+              Example2: 
+                summary: 'delete'
+                value:
+                  type: error
+                  message: item with field "${field}" and value "${value}" not found  
+
+      '404':
+        description:  Не найден
+        content:
+          application/json:
+            examples:
+              Example1:
+                  summary: 'default'
+                  value:
+                    type: error
+                    message: not found
+
+      '500':
+        description: Ошибка сервера
+        content:
+          application/json:
+            examples:
+              Example1:
+                summary: 'default'
+                value:
+                  type: error
+                  message: Internal Server Error
+            
+  securitySchemes:
+    basic: 
+     type: http
+     scheme: basic
+     
+tags:
+  - name: file
+    description: Операции над **файлом**
+  - name: birthday
+    description: Операции с событиями **день рождения**
+  - name: schedule
+    description: Операции с расписанием **занятий**
+  - name: config
+    description: Операции над **конфигурацией**
+    
+paths:
+    /:filename:
+        get:
+          tags:
+            - file
+          description: '### Выводит весь список все элементов'
+          operationId: getData
+          parameters:
+            - name: filename
+              in: path
+              required: true
+              schema:
+                type: string             
+          responses: 
+            '200':
+              $ref: '#/components/responses/list_200'
+            '404':
+              $ref: '#/components/responses/404'
+            '400':
+              $ref: '#/components/responses/get_400'
+            '500':
+              $ref: '#/components/responses/500'
+        post:
+          tags:
+            - file
+          description: '### Добавление элемента в список'
+          operationId: addData
+          parameters:
+            - name: filename
+              in: path
+              required: true
+              schema:
+                type: string
+          requestBody:
+            required: true
+            content:
+              application/json:  # Тип контента
+                schema:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      description: Название элемента
+                example: 
+                  field: "value"
+          responses:
+            '201':
+              $ref: '#/components/responses/201'
+            '400':
+              $ref: '#/components/responses/post_400'
+            '404':
+              $ref: '#/components/responses/404'
+            '500':
+              $ref: '#/components/responses/500'
+        
+        delete:
+          tags:
+            - file
+          description: '### Удаление элемента из списка'
+          parameters:
+          - name: filename
+            in: path
+            required: true
+            schema:
+              type: string
+          - name: field
+            in: query
+            required: true
+            schema:
+              type: string
+          - name: value
+            in: query
+            required: true
+            schema:
+              type: string
+            
+          responses:
+            '200':
+              $ref: '#/components/responses/delete_200'
+            '404':
+              $ref: '#/components/responses/delete_404'
+            '500':
+              $ref: '#/components/responses/500'
+
+    /:filename/:index:
+        get:
+          tags:
+              - file
+          description: ''
+          parameters: []
+          responses:
+              '200':
+                  description: OK  
+        put:
+          tags:
+            - file
+          description: '### Редактирование элемента из списка'
+          parameters:
+          - name: filename
+            in: path
+            required: true
+            schema:
+              type: string
+          - name: index
+            in: query
+            required: true
+            schema:
+              type: number
+              
+          requestBody:
+            required: true
+            content:
+              application/json:  # Тип контента
+                schema:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      description: Название элемента
+
+          responses:
+            '201':
+              $ref: '#/components/responses/put_201'
+            '400':
+              $ref: '#/components/responses/put_400'
+            '404':
+              $ref: '#/components/responses/put_404'
+            '500':
+              $ref: '#/components/responses/500'
+
+    /:filename/search:
+        get:
+          tags:
+              - file
+          description: '### Поиск элемент(ов) в списке'
+          parameters:
+            - name: filename
+              in: path
+              required: true
+              schema:
+                type: string   
+            - name: field
+              in: query
+              required: true
+              schema:
+                type: string
+            - name: value
+              in: query
+              required: true
+              schema:
+                type: string
+
+          responses:
+              '200':
+                  $ref: '#/components/responses/item_200'
+              '400':
+                  $ref: '#/components/responses/get_400'
+              '404':
+                  $ref: '#/components/responses/404'
+              '500':
+                  $ref: '#/components/responses/500'
+
+    /:filename/sort:
+        get:
+          tags:
+              - file
+              - birthday
+          description: '### Сортировка списка'
+          parameters:
+            - name: filename
+              in: path
+              required: true
+              schema:
+                type: string   
+            - name: field
+              in: query
+              required: true
+              schema:
+                type: string
+            - name: order
+              in: query
+              required: false
+              schema:
+                type: boolean
+            - name: byDate
+              in: query
+              required: false
+              schema:
+                type: string
+                enum: [day, month, year]
+
+          responses:
+              '200':
+                  $ref: '#/components/responses/list_200'
+              '400':
+                  $ref: '#/components/responses/sort_400'
+              '404':
+                  $ref: '#/components/responses/404'
+              '500':
+                  $ref: '#/components/responses/500'
+
+    /:filename/create/:type:
+        get:
+          tags:
+              - file
+          description: '### Создание файла'
+          parameters:
+            - name: filename
+              in: path
+              required: true
+              schema:
+                type: string   
+            - name: type
+              in: query
+              required: false
+              schema:
+                type: string
+                enum:
+                  - [date, time]
+          responses:
+              '200':
+                $ref: '#/components/responses/create_200'
+              '400':
+                $ref: '#/components/responses/create_400'
+              '500':
+                $ref: '#/components/responses/500'
+
+    /:filename/copy:
+        get:
+          tags:
+              - file
+          description: '### Копирование для резерва'
+          parameters:
+            - name: filename
+              in: path
+              required: true
+              schema:
+                type: string   
+          responses:
+              '200':
+                $ref: '#/components/responses/copy_200'
+              "400":
+                $ref: "#/components/responses/copy_400"
+              '500':
+                $ref: '#/components/responses/500'
+      
+    /:filename/restore:
+        get:
+          tags:
+              - file
+          description: '### Восстановления файла'
+          parameters:
+            - name: filename
+              in: path
+              required: true
+              schema:
+                type: string   
+          responses:
+              '200':
+                $ref: '#/components/responses/restore_200'
+              '400':
+                $ref: '#/components/responses/restore_400'
+              '500':
+                $ref: '#/components/responses/500'
+
+    /:filename/remove:
+        get:
+          tags:
+              - file
+          description: ''
+          parameters: 
+            - name: filename
+              in: path
+              required: true
+              schema:
+                type: string   
+          responses:
+              '200':
+                $ref: '#/components/responses/remove_200'
+              '400':
+                $ref: '#/components/responses/remove_400'
+              '500':
+                $ref: '#/components/responses/500'
+
+    /:filename/now:
+        get:
+          tags:
+              - birthday
+              - schedule
+          description: '### Получение актуального элемента '
+          parameters: 
+            - name: filename
+              in: path
+              required: true
+              schema:
+                type: string
+          responses:
+              '200':
+                $ref: '#/components/responses/item_200'
+              '404':
+                $ref: '#/components/responses/404'
+              '500':
+                $ref: '#/components/responses/500'
+
+    /:filename/near:
+        get:
+          tags:
+              - schedule
+          description: ''
+          parameters: 
+            - name: filename
+              in: path
+              required: true
+              schema:
+                type: string
+          responses:
+              '200':
+                $ref: '#/components/responses/item_200'
+              '404':
+                $ref: '#/components/responses/404'
+              '500':
+                $ref: '#/components/responses/500'
+
+    /save/config:
+        get:
+          tags:
+              - config
+          description: ''
+          responses:
+              '200':
+                  description: OK
+
+              
