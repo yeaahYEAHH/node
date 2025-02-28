@@ -8,11 +8,11 @@ info:
     version: "1.0.0"
     contact:
        name: Разработчик API
-       url: https://example.com/contact
+       url: http://10.0.4.68/developer
 
 externalDocs:
   description: Подробная Документация
-  url: https://example.com/docs
+  url: http://10.0.4.68/developer/node/-/wikis/home
 
 servers:
     - url: http://localhost:5000
