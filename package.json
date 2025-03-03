@@ -1,27 +1,29 @@
 {
-  "dependencies": {
-    "config.json": "^0.0.4",
-    "express": "^4.21.2",
-    "nodemon": "^3.1.7",
-    "swagger-ui-express": "^5.0.1",
-    "yamljs": "^0.3.0"
-  },
-  "devDependencies": {
-    "jest": "^29.7.0"
-  },
-  "scripts": {
-    "test": "jest",
-    "dev": "nodemon app.js",
-    "start": "node app.js"
-  },
-  "overrides": {
-    "minimist": "1.2.6",
-    "optimist": "^0.6.1",
-    "nconf": "^0.11.4"
-  },
-  "resolutions": {
-    "minimist": "1.2.6",
-    "optimist": "^0.6.1",
-    "nconf": "^0.11.4"
-  }
+	"dependencies": {
+		"config.json": "^0.0.4",
+		"express": "^4.21.2",
+		"nodemon": "^3.1.7",
+		"swagger-ui-express": "^5.0.1",
+		"yamljs": "^0.3.0"
+	},
+	"devDependencies": {
+		"jest": "^29.7.0",
+		"jsdoc-to-markdown": "^9.1.1"
+	},
+	"scripts": {
+		"test": "jest",
+		"dev": "nodemon app.js",
+		"start": "node app.js",
+		"doc": "jsdoc2md"
+	},
+	"overrides": {
+		"minimist": "1.2.6",
+		"optimist": "^0.6.1",
+		"nconf": "^0.11.4"
+	},
+	"resolutions": {
+		"minimist": "1.2.6",
+		"optimist": "^0.6.1",
+		"nconf": "^0.11.4"
+	}
 }

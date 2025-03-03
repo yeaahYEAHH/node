@@ -399,11 +399,25 @@ paths:
         get:
           tags:
               - file
-          description: ''
-          parameters: []
+          description: '### Получение по ID'
+          parameters: 
+          - name: filename
+            in: path
+            required: true
+            schema:
+              type: string
+          - name: index
+            in: path
+            required: true
+            schema:
+              type: number
           responses:
               '200':
-                  description: OK  
+                $ref: '#/components/responses/item_200'
+              '404': 
+                $ref: '#/components/responses/404'
+              '500': 
+                $ref: '#/components/responses/500' 
         put:
           tags:
             - file
@@ -415,7 +429,7 @@ paths:
             schema:
               type: string
           - name: index
-            in: query
+            in: path
             required: true
             schema:
               type: number
@@ -524,12 +538,14 @@ paths:
               schema:
                 type: string   
             - name: type
-              in: query
-              required: false
+              in: path
+              required: true
               schema:
                 type: string
                 enum:
-                  - [date, time]
+                  - date
+                  - time
+                  - array
           responses:
               '200':
                 $ref: '#/components/responses/create_200'
@@ -633,14 +649,5 @@ paths:
                 $ref: '#/components/responses/404'
               '500':
                 $ref: '#/components/responses/500'
-
-    /save/config:
-        get:
-          tags:
-              - config
-          description: ''
-          responses:
-              '200':
-                  description: OK
-
+  
               

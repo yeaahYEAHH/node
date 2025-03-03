@@ -320,107 +320,111 @@ function checkUnique(array, field) {
 	return true;
 }
 
+/**
+ * Функция для окрашивания текста в терминале.
+ * @function colorMessage
+ * @param {string} message - Сообщение, которое нужно окрасить.
+ * @param {string} [type="Info"] - Тип сообщения (Info, Warn, Error, Success, Debug).
+ * @param {string} [theme="standard"] - Тема оформления (dark, developer, light, standard, production).
+ * @returns {string} Окрашенное сообщение с ANSI-кодами.
+ */
 function colorMessage(message, type = "Info", theme = "standard") {
-	const color = {
-		Reset: "\x1b[0m",
-		Bold: "\x1b[1m",
-		Dim: "\x1b[2m",
-		Underscore: "\x1b[4m",
-		Blink: "\x1b[5m",
-		Reverse: "\x1b[7m",
-		Hidden: "\x1b[8m",
-
-		// font
-		FgBlack: "\x1b[30m",
-		FgRed: "\x1b[31m",
-		FgGreen: "\x1b[32m",
-		FgYellow: "\x1b[33m",
-		FgBlue: "\x1b[34m",
-		FgMagenta: "\x1b[35m",
-		FgCyan: "\x1b[36m",
-		FgWhite: "\x1b[37m",
-		FgGray: "\x1b[90m",
-
-		// background
-		BgBlack: "\x1b[40m",
-		BgRed: "\x1b[41m",
-		BgGreen: "\x1b[42m",
-		BgYellow: "\x1b[43m",
-		BgBlue: "\x1b[44m",
-		BgMagenta: "\x1b[45m",
-		BgCyan: "\x1b[46m",
-		BgWhite: "\x1b[47m",
-		BgGray: "\x1b[100m",
-	};
-
-	const themes = {
-		dark: {
-			Info: color.FgBlue,
-			Warn: color.BgYellow + color.FgBlack,
-			Error: color.BgRed + color.FgWhite,
-			Success: color.FgGreen,
-			Debug: color.FgCyan,
-		},
-
-		developer: {
-			Info: color.Bright + color.FgCyan,
-			Warn: color.Bright + color.FgYellow,
-			Error: color.Bright + color.FgRed,
-			Success: color.Bright + color.FgGreen,
-			Debug: color.Bright + color.FgMagenta,
-		},
-
-		light: {
-			Info: color.FgGray,
-			Warn: color.FgYellow,
-			Error: color.BgRed + color.FgWhite,
-			Success: color.FgGreen,
-			Debug: color.FgMagenta,
-		},
-
-		standard: {
-			Info: color.FgBlue,
-			Edit: color.FgCyan,
-			Warn: color.FgYellow,
-			Error: color.FgRed,
-			Success: color.FgGreen,
-			Debug: color.FgMagenta,
-		},
-
-		production: {
-			Info: color.FgWhite,
-			Warn: color.FgYellow,
-			Error: color.FgRed,
-			Success: color.FgGreen,
-			Debug: color.FgGray,
-		},
-
-		reset: color.Reset,
-	};
-
-	message = `${themes[theme][type]}${message}${themes.reset}`;
-	return message;
+    const color = {
+        Reset: "\x1b[0m",
+        Bold: "\x1b[1m",
+        Dim: "\x1b[2m",
+        Underscore: "\x1b[4m",
+        Blink: "\x1b[5m",
+        Reverse: "\x1b[7m",
+        Hidden: "\x1b[8m",
+        // font
+        FgBlack: "\x1b[30m",
+        FgRed: "\x1b[31m",
+        FgGreen: "\x1b[32m",
+        FgYellow: "\x1b[33m",
+        FgBlue: "\x1b[34m",
+        FgMagenta: "\x1b[35m",
+        FgCyan: "\x1b[36m",
+        FgWhite: "\x1b[37m",
+        FgGray: "\x1b[90m",
+        // background
+        BgBlack: "\x1b[40m",
+        BgRed: "\x1b[41m",
+        BgGreen: "\x1b[42m",
+        BgYellow: "\x1b[43m",
+        BgBlue: "\x1b[44m",
+        BgMagenta: "\x1b[45m",
+        BgCyan: "\x1b[46m",
+        BgWhite: "\x1b[47m",
+        BgGray: "\x1b[100m",
+    };
+    const themes = {
+        dark: {
+            Info: color.FgBlue,
+            Warn: color.BgYellow + color.FgBlack,
+            Error: color.BgRed + color.FgWhite,
+            Success: color.FgGreen,
+            Debug: color.FgCyan,
+        },
+        developer: {
+            Info: color.Bold + color.FgCyan,
+            Warn: color.Bold + color.FgYellow,
+            Error: color.Bold + color.FgRed,
+            Success: color.Bold + color.FgGreen,
+            Debug: color.Bold + color.FgMagenta,
+        },
+        light: {
+            Info: color.FgGray,
+            Warn: color.FgYellow,
+            Error: color.BgRed + color.FgWhite,
+            Success: color.FgGreen,
+            Debug: color.FgMagenta,
+        },
+        standard: {
+            Info: color.FgBlue,
+            Edit: color.FgCyan,
+            Warn: color.FgYellow,
+            Error: color.FgRed,
+            Success: color.FgGreen,
+            Debug: color.FgMagenta,
+        },
+        production: {
+            Info: color.FgWhite,
+            Warn: color.FgYellow,
+            Error: color.FgRed,
+            Success: color.FgGreen,
+            Debug: color.FgGray,
+        },
+        reset: color.Reset,
+    };
+    message = `${themes[theme][type]}${message}${themes.reset}`;
+    return message;
 }
 
+/**
+ * Функция для логирования сообщений в консоль с цветовым форматированием.
+ * @function log
+ * @param {string} message - Сообщение для логирования.
+ * @param {string} [type] - Тип сообщения (Info, Warn, Error, Success, Debug).
+ */
 function log(message, type) {
-	let stamp = colorMessage(
-		new Intl.DateTimeFormat("ru", {
-			timeZone: "Asia/Yekaterinburg",
-			year: "2-digit",
-			month: "2-digit",
-			day: "2-digit",
-			hour: "2-digit",
-			minute: "2-digit",
-			second: "2-digit",
-		}).format(new Date()),
-		"Warn"
-	);
-
-	if (type === "Error") {
-		console.error(stamp, colorMessage(message, type));
-	} else {
-		console.log(stamp, colorMessage(message, type));
-	}
+    let stamp = colorMessage(
+        new Intl.DateTimeFormat("ru", {
+            timeZone: "Asia/Yekaterinburg",
+            year: "2-digit",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+        }).format(new Date()),
+        "Warn"
+    );
+    if (type === "Error") {
+        console.error(stamp, colorMessage(message, type));
+    } else {
+        console.log(stamp, colorMessage(message, type));
+    }
 }
 
 module.exports = {

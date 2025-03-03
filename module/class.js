@@ -59,7 +59,6 @@ class FileArrayJSON {
 	constructor(file) {
 		this.path = path.join(FOLDER, `${file}.json`);
 		this.pathCopy = path.join(COPY, `${file}.json`);
-		console.log(this.path, this.pathCopy)
 		this.data = null;
 	}
 
@@ -175,7 +174,6 @@ class FileArrayJSON {
 	 */
 	async remove() {
 		try {
-			await fs.promises.unlink(this.pathCopy);
 			await fs.promises.unlink(this.path);
 		} catch (err) {
 			// Если произошла ошибка, выбрасываем ее с дополнительным сообщением
@@ -467,11 +465,9 @@ class FileTimeJSON extends FileArrayJSON {
 		return found;
 	}
 
-	near(time = undefined, start = "timeStart") {
-		this._validate(start);
-		this._validateField(start);
+	near(start = 'timeStart') {
 
-		time = time ? time : this.#formatter.format(Date.now());
+		const time =  this.#formatter.format(Date.now());
 
 		// Время по стандарту чч:мм
 		if (!this.#timeRegExp.test(time)) {
