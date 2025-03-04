@@ -10,6 +10,9 @@ const { log } = require("./module.js");
  */
 const express = require("express");
 
+
+const {FileTime} = require("./class.js")
+
 /**
  * Роутер Express для обработки запросов.
  * @type {Express.Router}

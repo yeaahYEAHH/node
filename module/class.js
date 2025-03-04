@@ -476,11 +476,9 @@ class FileTimeJSON extends FileArrayJSON {
 
 		this._validateField(start);
 
-		this.sort(start);
+		const result = this.data.find((item) => item[start] > time);
 
-		const found = this.data.find((item) => item[start] > time);
-
-		return found ? found : null;
+		return result ? result : null;
 	}
 }
 

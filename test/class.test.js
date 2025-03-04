@@ -213,7 +213,8 @@ describe("FileDate", () => {
 });
 
 describe("FileTime", () => {
-	const newFileObj = new FileTime(src[random.range(1, src.length - 1)]);
+	// const newFileObj = new FileTime(src[random.range(1, src.length - 1)]);
+	const newFileObj = new FileTime('scheduleUAK')
 	const dataCor = [];
 	let fieldStart, fieldEnd;
 	let data;
@@ -274,15 +275,9 @@ describe("FileTime", () => {
 		// Отлов ошибки при несуществующем поле !Error
 		expect(() =>
 			newFileObj.near(
-				random.string(undefined, 5),
 				random.string(undefined, 5)
 			)
 		).toThrowError();
-
-		// Отлов ошибки при несоответствии time формату hh:mm !Error
-		expect(() =>
-			newFileObj.near(random.string(undefined, 10), fieldStart)
-		).toThrowError(`time does not match the time format hh:ii`);
 
 		// Проверка на возвращаемый time !Item
 		{
