@@ -4,6 +4,8 @@
  */
 const express = require("express");
 
+const cors = require('cors')
+
 /**
  * Конфигурационный файл приложения.
  * @module config
@@ -179,6 +181,7 @@ const handleFileOperation = async (req, res, operation, params = []) => {
 const swaggerDocument = YAML.load("./api/api-docs.yml");
 
 // Подключение middleware и маршрутов
+app.use(cors())
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(authorization);
 app.use(requestTimeoutMiddleware(5000));
