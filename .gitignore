@@ -1,10 +1,10 @@
 /node_modules
-*.json
+config.json
+/json
+/backup
 *.txt
-*.js
 test.yml
 npmrc
-
-
-
-
+env.js
+package-lock.json
+*.tar

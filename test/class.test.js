@@ -1,15 +1,10 @@
-const { FileArray, FileDate, FileTime } = require("./class.js");
-const { Random, checkUnique, isEqualByType } = require("./module.js");
+const { FileArray, FileDate, FileTime } = require("../module/class.js");
+const { Random, checkUnique } = require("../module/module.js");
+const { TYPES } = require("../config.json");
 
 const random = new Random();
 
-const src = [
-	"json/birthday.json",
-	"json/scheduleLDK.json",
-	"json/scheduleMonday.json",
-	"json/scheduleUAK.json",
-	"json/scheduleUPK.json",
-];
+const src = Object.keys(TYPES);
 
 describe("FileArray", () => {
 	const newFileObj = new FileArray(src[random.number(src.length - 1)]);
@@ -202,7 +197,7 @@ describe("FileDate", () => {
 		data = random.get();
 	});
 
-	test(`FileDate.date() is correct work`, () => {
+	test(`FileDate.now() is correct work`, () => {
 		// Проверка на нахождение элемента по дата dd.mm.yyyy
 		{
 			const result = newFileObj.now(data.item["Date"]);
@@ -219,15 +214,10 @@ describe("FileDate", () => {
 
 describe("FileTime", () => {
 	// const newFileObj = new FileTime(src[random.range(1, src.length - 1)]);
-	const newFileObj = new FileTime(src[1]);
+	const newFileObj = new FileTime('scheduleUAK')
 	const dataCor = [];
 	let fieldStart, fieldEnd;
 	let data;
-	const time = new Intl.DateTimeFormat("ru", {
-				timeZone: "Asia/Yekaterinburg",
-				hour: "2-digit",
-				minute: "2-digit",
-			}).format(new Date());
 
 	beforeAll(async () => {
 		await newFileObj.load();
@@ -247,9 +237,6 @@ describe("FileTime", () => {
 	});
 
 	test(`FileTime.now() is correct work`, () => {
-		// Проверка на вызов без параметр(ов) !Error
-		expect(() => newFileObj.now()).toThrowError("parametr(s) is undefind");
-
 		// Отлов ошибки при несуществующем поле !Error
 		expect(() =>
 			newFileObj.now(
@@ -274,7 +261,7 @@ describe("FileTime", () => {
 
 		// Проверка на возвращаемый time !Item
 		{
-			const result = newFileObj.now(fieldStart, fieldEnd, time);
+			const result = newFileObj.now(fieldStart, fieldEnd);
 
 			if (result !== null) {
 				expect(result).toBeDefined();
@@ -285,25 +272,16 @@ describe("FileTime", () => {
 	});
 
 	test(`FileTime.near() is correct work`, () => {
-		// Проверка на вызов без параметр(ов) !Error
-		expect(() => newFileObj.near()).toThrowError("parametr(s) is undefind");
-
 		// Отлов ошибки при несуществующем поле !Error
 		expect(() =>
 			newFileObj.near(
-				random.string(undefined, 5),
 				random.string(undefined, 5)
 			)
 		).toThrowError();
 
-		// Отлов ошибки при несоответствии time формату hh:mm !Error
-		expect(() =>
-			newFileObj.near(fieldStart, random.string(undefined, 10))
-		).toThrowError(`time does not match the time format hh:ii`);
-
 		// Проверка на возвращаемый time !Item
 		{
-			const result = newFileObj.near(time, fieldStart);
+			const result = newFileObj.near(undefined, fieldStart);
 
 			if (result !== null) {
 				expect(result).toBeDefined();
@@ -311,5 +289,5 @@ describe("FileTime", () => {
 				expect(result).toBeNull();
 			}
 		}
-	})
+	});
 });
